@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define MAX_DESCRIPTION_LENGTH 256
-#define INITIAL_CAPACITY 3
+#define INITIAL_CAPACITY 10
 
 typedef struct {
     int id;
@@ -24,6 +24,7 @@ void add_todo(const char *description);
 void list_todos();
 void complete_todo(int id);
 void delete_todo(int id);
+void save_todos_to_file();
 
 int main(void) {
     initialize_todo_list();
@@ -39,7 +40,8 @@ int main(void) {
         printf("3. Mark Todo as Complete\n");
         printf("4. Delete Todo\n");
         printf("5. Save Todos\n");
-        printf("6. Exit\n");
+        printf("6. Reset List\n");
+        printf("7. Exit\n");
         printf("\nEnter Your Choice: ");
 
         if (scanf("%d", &choice) != 1) {
@@ -84,7 +86,17 @@ int main(void) {
             clean_input_buffer();
             break;
 
+        case 5:
+            save_todos_to_file();
+            printf("\nSuccess: Todos are saved successfully!\n");
+            break;
+
         case 6:
+            free_todo_list();
+            printf("\nSuccess: reseted the list\n");
+            break;
+
+        case 7:
             printf("\nExiting application. Have a great day!\n");
             break;
 
@@ -92,7 +104,10 @@ int main(void) {
             printf("\nInvalid choice!\n");
         }
 
-    } while (choice != 6);
+    } while (choice != 7);
+
+    free_todo_list();
+    printf("Success: used resources are freed.\n");
 
     return 0;
 }
@@ -213,5 +228,24 @@ void delete_todo(int id) {
     }
 
     printf("\nError: couldn't find todo with the ID %d\n", id);
+    return;
+}
+
+void save_todos_to_file() {
+    FILE *f = fopen("todos.txt", "w");
+
+    if (f == NULL) {
+        perror("Couldn't open file for saving\n");
+        return;
+    }
+
+    for (int i = 0; i < todo_count; i++) {
+        TodoItem *next_item = &todo_list[i];
+
+        fprintf(f, "%d, %s, %s\n", next_item->id,
+                next_item->completed ? "COMPLETED" : "PENDING",
+                next_item->description);
+    }
+
     return;
 }

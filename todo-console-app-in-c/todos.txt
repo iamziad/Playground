@@ -1,0 +1,4 @@
+1, PENDING, Buy Coffee
+2, PENDING, Practice some programming
+3, PENDING, practice some english
+4, COMPLETED, take a look at today's update in the tech scene
